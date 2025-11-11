@@ -29,6 +29,12 @@ log_erro() {
     exit 1
 }
 
+# Configura IP na interface
+configurar_ip() {
+    log_info "Configurando IP $IP_FIXO..."
+    ifconfig "$NIC" "$IP_FIXO" netmask "$NETMASK" || log_erro "Falha ao configurar IP"
+    log_ok "IP configurado"
+}
 
 # Instala dependências
 instalar_dependencias() {
