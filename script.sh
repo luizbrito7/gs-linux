@@ -5,9 +5,15 @@ set -e
 # Variáveis
 readonly NETMASK="255.255.255.0"
 readonly IP_FIXO="192.168.56.201"
+
+
 readonly NIC="enp0s8"
 readonly SITE_URL="https://www.tooplate.com/zip-templates/2129_crispy_kitchen.zip"
 readonly WEB_DIR="/var/www/html"
+
+
+readonly DOMAIN="luandi.local"
+readonly DNS_CONF="/etc/named.conf"
 
 # Cores
 readonly RED='\033[0;31m'
@@ -67,10 +73,23 @@ configurar_site() {
     log_ok "Site configurado"
 }
 
-# 
+# Configura DNS (BIND)
+configurar_dns() {
+    log_info "Configurando DNS..."
+    
+    # Copia arquivo base para /etc/named.conf
+    cp dns/named.conf "$DNS_CONF" || log_erro "Falha ao copiar named.conf"
+    
+    # Substitui VARIAVEL pelo domínio real
+    sed -i "s/VARIAVEL/$DOMAIN/g" "$DNS_CONF"
+    
+    log_ok "DNS configurado"
+}
+
+# Inicia serviço DNS
 iniciar_dns() {
     log_info "Iniciando serviço DNS..."
-    systemctl enable named --now &>/dev/null || log_erro "Falha ao iniciar DNS"
+    systemctl enable named &>/dev/null || log_erro "Falha ao iniciar DNS"
     log_ok "DNS rodando"
 }
 
@@ -81,9 +100,16 @@ main() {
     instalar_dependencias
     iniciar_webserver
     configurar_site
+
+
+    configurar_dns
     iniciar_dns
+    
+    
     echo ""
-    log_ok "Configuração concluída! Acesse: http://$IP_FIXO"
+    log_ok "Configuração concluída!"
+    echo -e "  → Site: http://$IP_FIXO"
+    echo -e "  → DNS: $DOMAIN"
 }
 
 # Execução
