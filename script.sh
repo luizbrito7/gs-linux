@@ -14,6 +14,7 @@ readonly WEB_DIR="/var/www/html"
 
 readonly DOMAIN="luandi.local"
 readonly DNS_CONF="/etc/named.conf"
+readonly ZONE_DIR="/var/named"
 
 # Cores
 readonly RED='\033[0;31m'
@@ -77,11 +78,21 @@ configurar_site() {
 configurar_dns() {
     log_info "Configurando DNS..."
     
-    # Copia arquivo base para /etc/named.conf
+    # Copia named.conf base
     cp dns/named.conf "$DNS_CONF" || log_erro "Falha ao copiar named.conf"
-    
-    # Substitui VARIAVEL pelo domínio real
     sed -i "s/VARIAVEL/$DOMAIN/g" "$DNS_CONF"
+    
+    # Copia arquivo de zona
+    cp dns/VARIAVEL.zone "$ZONE_DIR/$DOMAIN.zone" || log_erro "Falha ao copiar zona"
+    sed -i "s/VARIAVEL/$DOMAIN/g" "$ZONE_DIR/$DOMAIN.zone"
+    sed -i "s/IP_FIXO/$IP_FIXO/g" "$ZONE_DIR/$DOMAIN.zone"
+    
+    # Ajusta permissões
+    chown named:named "$ZONE_DIR/$DOMAIN.zone"
+    
+    # Valida configuração
+    named-checkconf || log_erro "Erro no named.conf"
+    named-checkzone "$DOMAIN" "$ZONE_DIR/$DOMAIN.zone" || log_erro "Erro na zona"
     
     log_ok "DNS configurado"
 }

@@ -1,0 +1,18 @@
+$TTL 300
+@       IN      SOA     ns1.VARIAVEL. admin.VARIAVEL. (
+        2014022100      ; serial
+        7200            ; refresh (2 hours)
+        3600            ; retry (1 hour)
+        86400           ; expire (24 hours)
+        300             ; minimum TTL (5 minutes)
+        )
+
+@       IN      NS      ns1.VARIAVEL.
+@       IN      NS      ns2.VARIAVEL.
+
+@       IN      MX      10      mail.VARIAVEL.
+
+ns1     IN      A       IP_FIXO
+ns2     IN      A       IP_FIXO
+www     IN      A       IP_FIXO
+mail    IN      A       IP_FIXO
