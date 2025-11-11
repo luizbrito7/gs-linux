@@ -81,7 +81,7 @@ main() {
     instalar_dependencias
     iniciar_webserver
     configurar_site
-    
+    iniciar_dns
     echo ""
     log_ok "Configuração concluída! Acesse: http://$IP_FIXO"
 }
