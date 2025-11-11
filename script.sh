@@ -39,7 +39,7 @@ configurar_ip() {
 # Instala dependências
 instalar_dependencias() {
     log_info "Instalando dependências..."
-    yum install -y httpd wget unzip &>/dev/null || log_erro "Falha na instalação"
+    yum install -y httpd wget unzip bind &>/dev/null || log_erro "Falha na instalação"
     log_ok "Dependências instaladas"
 }
 
@@ -66,6 +66,14 @@ configurar_site() {
     rm -rf /tmp/site*
     log_ok "Site configurado"
 }
+
+# 
+iniciar_dns() {
+    log_info "Iniciando serviço DNS..."
+    systemctl enable named --now &>/dev/null || log_erro "Falha ao iniciar DNS"
+    log_ok "DNS rodando"
+}
+
 
 # Função principal
 main() {
